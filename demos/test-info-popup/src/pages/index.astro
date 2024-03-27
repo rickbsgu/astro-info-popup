@@ -1,0 +1,65 @@
+---
+import AstroInfoPopup from 'astro-info-popup';
+
+const POPUP_ID:string = "test-info-popup";
+const contentHTML:string = `
+<h2>Some HTML Here</h2>
+<p>
+Isn't it a wonderful day? The puffy clouds are beautiful and would make a great
+Georgia O'Keefe subject.</p>
+<p>
+I hope to get out in it later &mdash; maybe for a scooter ride.</p>
+<p>
+If all else fails, I'll take the car, I guess.  Would rather not.</p>
+<hr/>
+<p>
+Ostensibly, I could take _BigBit_, but I'm not sure it's running properly.  Might have
+electrical issues after I accidentally crossed polarity when I jumped one of the cars.</p>
+<p>
+A dumb mistake, to be sure.  Could end up costing me.</p>
+<hr/>
+<p>
+At the moment, I'm focused on my impending hip surgery.  I need to save all of my
+nickels for that &mdash; especially since I don't know how much it's going to cost me.</p>
+<p>
+I'm guessing between $4000 and $5000, but I can't get an answer out of the folks at <em>Revere</em>.
+So, I just have to wait until it gets closer and they start the cost estimation process.</p>
+`;
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+	</head>
+	<body style="padding-bottom:1000px">
+		<h1>Astro Info Popup</h1>
+    <div id="content" 
+      style="display:flex;justify-content:center;align-content;height:100vh;width:100vw;"
+      data-popup-id={POPUP_ID},
+      data-content-html={contentHTML}>
+      <button style="margin:auto;padding:0.2em 0.5em;font-size:3em;border-radius:20px;">Click Here</Button>
+    </div>
+    <AstroInfoPopup popupId={POPUP_ID}/>
+	</body>
+  <script>
+    function showInfoPopup(popupId:string, contentHTML:string) {
+      console.log("Triggering popup...");
+      const evt = new CustomEvent(popupId, {bubbles:true, detail:contentHTML});
+      window.dispatchEvent(evt);
+      // send signal to the info popup
+    }
+
+    (function() {
+      const contentEL = document.getElementById("content")!;
+      const button = document.getElementsByTagName("button")[0]!;
+      button.addEventListener('click', (evt) => {
+        showInfoPopup(contentEL.dataset.popupId!, contentEL.dataset.contentHtml!);
+      });
+
+    }());
+  </script>
+</html>

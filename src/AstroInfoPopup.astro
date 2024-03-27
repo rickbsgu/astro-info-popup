@@ -1,0 +1,155 @@
+---
+// @ts-nocheck
+/**
+ | AstroInfoPopup.astro
+ |
+ | To trigger the popup, send a custom event 'showinfopopup'
+ |
+ | Example:
+ |   ---
+ |   const infoItem = { <fill in details> }
+ |   const infoItemJSON = JSON.stringify([infoItem]);
+ |   ---
+ |      ...
+ |   <PopupInfo id="" html="" />
+ |      ...
+ |   <script>
+ |      ...
+ |     const event = new CustomEvent('showinfopopup', {bubbles:true, detail:this.dataset-dataInfoItem});
+ |     window.dispatch(event);
+ |      ...
+ |   </script>
+ */
+
+interface Props {
+  popupId: string;
+  styles?: string;
+}
+
+const { popupId, styles="background-color:wheat" } = Astro.props;
+---
+<style>
+  .blackout-ctnr {
+    position: absolute; height:100vh; width: 100vw;
+    display: flex; flex-direction: row; justify-content: center;
+    top:0; left:0;
+    background-color:rgba(0, 0, 0, 0.7);
+    visibility:hidden
+  }
+
+  .loupe {
+    height:80vh; width:50vw; margin:auto; padding-left:2em; padding-right:2em;font-size:1.5rem;
+    border-radius:20px; overflow-y: auto;
+  }
+
+  .popup-scale-in {
+    animation-name: popup_scale_in;
+    animation-duration: 1s;
+  }
+
+  .popup-scale-out {
+    animation-name: popup_scale_out;
+    animation-duration: 0.5s;
+    animation-direction: reverse;
+  }
+
+  @keyframes popup_scale_in {
+    0%  { transform: scaleX(0.01) scaleY(0.01); }
+    50% { transform: scaleX(1.0) scaleY(0.01);}
+    100% { transform: scaleX(1.0) scaleY(1.0); }
+  }
+
+  @keyframes popup_scale_out {
+    0%  { transform: scaleX(0.01) scaleY(0.01); }
+    50% { transform: scaleX(1.0) scaleY(0.01);}
+    100% { transform: scaleX(1.0) scaleY(1.0); }
+  }
+
+</style>
+
+<div is="info-popup" 
+    data-popup-id={popupId}
+    class="blackout-ctnr">
+  <div style={styles} class="loupe"></div>
+</div>
+
+<script>
+const ANIM_OPEN="open";
+const ANIM_CLOSE="close";
+class infoPopup extends HTMLDivElement {
+  loupe:HTMLElement;
+  isAnimating:string | null;
+  popupId: string;
+ constructor() {
+    super();
+    const self = this;
+    this.popupId = this.dataset.popupId;
+    this.loupe = this.querySelector(".loupe");
+    this.isAnimating = null;
+
+    this.addEventListener('keydown', (event) => {
+      event.preventDefault(); event.stopPropagation(); return false;
+    });
+
+    this.addEventListener('click', (event) => {
+        this.hideLoupe()
+    });
+
+    window.addEventListener(this.popupId, (event) => {
+        console.log('got showinfopopup event');
+        //@ts-ignore
+        const hasDetail:boolean = !!event.detail
+        // @ts-ignore
+
+        const infoHtml = event.detail;
+
+        const loupeRect = this.loupe.getBoundingClientRect();
+
+        this.style.top = Math.round(window.scrollY) + 'px';
+        this.loupe.classList.add('popup-scale-in');
+        this.addEventListener('animationend', this.animEnded);
+        this.isAnimating = ANIM_OPEN;
+
+        self.showLoupe(infoHtml);
+      });
+
+    this.setLoupeVisibility(false);
+    window.addEventListener('scroll', () => this.setLoupeVisibility(false))
+  }
+
+  animEnded() {
+    const wasAnimating:string = this.isAnimating;
+    this.isAnimating = null;
+    if (wasAnimating === ANIM_OPEN) {
+      this.loupe.classList.remove('popup-scale-in');
+    }
+
+    else {
+      this.setLoupeVisibility(false);
+      let infoEl:HTMLDivElement = this.querySelector(".loupe")!
+      infoEl.innerText = ""
+      this.loupe.classList.remove('popup-scale-out');
+    }
+
+    this.isAnimating = null;
+  }
+
+  setLoupeVisibility(vis:boolean) {
+    this.style.visibility = vis? 'visible' : 'hidden';
+    console.log('In setLoupeVisibility - ' + this.style.visibility);
+  }
+
+  showLoupe(infoHTML:string):void {
+    let loupeEl:HTMLDivElement = this.querySelector(".loupe")!;
+    loupeEl.innerHTML = infoHTML;
+    this.setLoupeVisibility(true);
+  }
+ 
+  hideLoupe():void {
+    this.loupe.classList.add('popup-scale-out');
+    this.isAnimating = ANIM_CLOSE;
+  }
+}
+
+customElements.define('info-popup', infoPopup, {extends: 'div'});
+</script>
