@@ -39,7 +39,7 @@ const { popupId, styles="background-color:wheat" } = Astro.props;
 
   .loupe {
     height:80vh; width:50vw; margin:auto; padding-left:2em; padding-right:2em;font-size:1.5rem;
-    border-radius:20px; overflow-y: auto;
+    border-radius:20px; overflow-y: auto; overscroll: contain; padding-bottom:40px;
   }
 
   .popup-scale-in {
@@ -76,6 +76,25 @@ const { popupId, styles="background-color:wheat" } = Astro.props;
 <script>
 const ANIM_OPEN="open";
 const ANIM_CLOSE="close";
+customElements.define('cl-divider',
+  class extends HTMLElement {
+    constructor() {
+      super();
+
+      const shadow = this.attachShadow({mode: 'closed'});
+      shadow.innerHTML = `
+    <style>
+      div.outer { display:flex; flex-direction:row; justify-content:center; width:100%; }
+      div.inner {height:2px; margin-top:1em; margin-bottom: 1em; background-color:#999; width:50%;}
+    </style>
+    <div class="outer">
+      <div class="inner"></div>
+    </div>
+      `; 
+    }
+  }
+)
+
 class infoPopup extends HTMLDivElement {
   loupe:HTMLElement;
   isAnimating:string | null;
@@ -83,8 +102,8 @@ class infoPopup extends HTMLDivElement {
  constructor() {
     super();
     const self = this;
-    this.popupId = this.dataset.popupId;
-    this.loupe = this.querySelector(".loupe");
+    this.popupId = this.dataset.popupId!;
+    this.loupe = this.querySelector(".loupe")!;
     this.isAnimating = null;
 
     this.addEventListener('keydown', (event) => {
@@ -118,7 +137,7 @@ class infoPopup extends HTMLDivElement {
   }
 
   animEnded() {
-    const wasAnimating:string = this.isAnimating;
+    const wasAnimating:string | null = this.isAnimating;
     this.isAnimating = null;
     if (wasAnimating === ANIM_OPEN) {
       this.loupe.classList.remove('popup-scale-in');
