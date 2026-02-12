@@ -115,7 +115,7 @@ class infoPopup extends HTMLDivElement {
     });
 
     window.addEventListener(this.popupId, (event) => {
-        console.log('got showinfopopup event');
+        // console.log('got showinfopopup event');
         //@ts-ignore
         const hasDetail:boolean = !!event.detail
         // @ts-ignore
@@ -155,7 +155,7 @@ class infoPopup extends HTMLDivElement {
 
   setLoupeVisibility(vis:boolean) {
     this.style.visibility = vis? 'visible' : 'hidden';
-    console.log('In setLoupeVisibility - ' + this.style.visibility);
+    // console.log('In setLoupeVisibility - ' + this.style.visibility);
   }
 
   showLoupe(infoHTML:string):void {
