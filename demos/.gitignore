@@ -2,6 +2,7 @@
 dist/
 # generated types
 .astro/
+nohup.out
 
 # dependencies
 node_modules/

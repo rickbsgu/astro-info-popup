@@ -1,6 +1,6 @@
 {
-  "name": "astro-info-popup",
-  "version": "1.0.1",
+  "name": "@rickbsgu/astro-info-popup",
+  "version": "1.0.1a",
   "type": "module",
   "exports": {
     ".": "./index.ts"
