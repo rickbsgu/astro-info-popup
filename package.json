@@ -14,6 +14,6 @@
   ],
   "scripts": {},
   "peerDependencies": {
-    "astro": "^5.16.6"
+    "astro": "*"
   }
 }
