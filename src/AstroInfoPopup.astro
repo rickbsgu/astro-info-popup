@@ -50,7 +50,7 @@ const { popupId, styles="background-color:wheat" } = Astro.props;
   }
 </style>
 
-<div is="info-popup" 
+<info-popup 
     data-popup-id={popupId}
     class="blackout-ctnr">
   <div style={styles} class="info-loupe">
@@ -59,7 +59,10 @@ const { popupId, styles="background-color:wheat" } = Astro.props;
     <button style="color:#333" id="close-button">Close</button>
     </div>
   </div>
-</div>
+</info-popup>
+<!--
+ -------------------------------------------------------------------------------------------
+ -->
 <script>
 customElements.define('cl-divider',
   class extends HTMLElement {
@@ -79,7 +82,7 @@ customElements.define('cl-divider',
   }
 )
 
-class infoPopup extends HTMLDivElement {
+class infoPopup extends HTMLElement {
   loupe:HTMLElement;
   popupId: string;
  constructor() {
@@ -131,5 +134,5 @@ class infoPopup extends HTMLDivElement {
   }
 }
 
-customElements.define('info-popup', infoPopup, {extends: 'div'});
+customElements.define('info-popup', infoPopup);
 </script>
