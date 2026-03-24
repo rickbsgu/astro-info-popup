@@ -38,15 +38,17 @@ const { popupId, styles="background-color:wheat" } = Astro.props;
   }
 
   .info-loupe {
+    display:flex; flex-direction:column;
     max-height:80vh; width:50vw; margin:auto; padding-left:2em; padding-right:2em;font-size:1rem;
-    border-radius:20px; overflow-y: auto; overscroll: contain; overflow-y: auto;
+    border-radius:20px; 
     z-index:99999; position:relative; height:auto; font-family:Roboto;
-  }
-
-  .info-loupe {
     p, li { margin-top: 1rem; font-size: 1rem; }
     h3 { margin-top: 1rem; text-decoration: underline; }
     ul { margin-left: 1em; }
+  }
+
+  #info-loupe-content {
+      flex-grow: 1; overflow-y: auto; overscroll: contain;
   }
 </style>
 
@@ -56,7 +58,7 @@ const { popupId, styles="background-color:wheat" } = Astro.props;
   <div style={styles} class="info-loupe">
     <div id="info-loupe-content" />
     <div style="display: flex; justify-content: end;padding: 1rem 0;">
-    <button style="color:#333" id="close-button">Close</button>
+    <button id="close-button">Close</button>
     </div>
   </div>
 </info-popup>
